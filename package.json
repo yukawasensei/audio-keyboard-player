@@ -1,0 +1,31 @@
+{
+  "name": "audio-keyboard-player",
+  "version": "1.0.0",
+  "description": "A web-based audio player that allows users to trigger and manage multiple audio clips using keyboard shortcuts",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./styles.css -o ./dist/styles.css --watch",
+    "build": "npx tailwindcss -i ./styles.css -o ./dist/styles.css --minify"
+  },
+  "keywords": [
+    "audio",
+    "player",
+    "keyboard",
+    "shortcuts",
+    "dj",
+    "console"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@radix-ui/react-icons": "^1.3.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

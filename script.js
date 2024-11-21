@@ -16,7 +16,8 @@ class AudioPlayer {
         // 设置添加按钮监听器
         document.querySelectorAll('.add-audio').forEach(button => {
             button.addEventListener('click', (e) => {
-                const input = e.target.previousElementSibling;
+                const slot = e.target.closest('.audio-slot');
+                const input = slot.querySelector('.audio-input');
                 input.click();
             });
         });
@@ -40,68 +41,53 @@ class AudioPlayer {
     }
 
     handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
         const slot = event.target.closest('.audio-slot');
-        const key = slot.dataset.key;
-        const audioList = slot.querySelector('.audio-list');
+        const files = Array.from(event.target.files);
+        const currentCount = slot.querySelector('.audio-list').children.length;
+        const remainingSlots = 10 - currentCount;
 
-        // 检查是否已达到最大音频数量
-        if (audioList.children.length >= 10) {
-            alert('每个按键最多只能添加10个音频文件');
+        if (files.length > remainingSlots) {
+            alert(`每个按键最多只能添加10个音频文件。当前还可以添加${remainingSlots}个。`);
             return;
         }
 
-        // 创建新的音频元素
-        const audio = new Audio(URL.createObjectURL(file));
-        
-        // 创建音频项目元素
-        const audioItem = document.createElement('div');
-        audioItem.className = 'audio-item';
-        audioItem.innerHTML = `
-            <span class="audio-name">${file.name}</span>
-            <button class="remove-audio" title="删除音频">×</button>
-        `;
-
-        // 添加删除按钮事件
-        const removeButton = audioItem.querySelector('.remove-audio');
-        removeButton.addEventListener('click', () => {
-            if (this.currentlyPlaying === audio) {
-                this.stopAudio();
+        files.forEach(file => {
+            if (!file.type.startsWith('audio/')) {
+                alert(`文件 "${file.name}" 不是音频文件。`);
+                return;
             }
-            URL.revokeObjectURL(audio.src);
-            audioItem.remove();
+
+            const audioItem = document.createElement('div');
+            audioItem.className = 'audio-item flex items-center gap-2 p-2 bg-gray-50 rounded-md group hover:bg-gray-100 transition-colors h-12 w-full mb-2';
             
-            // 更新音频列表
-            const audioItems = this.getSlotAudios(key);
-            if (audioItems.length === 0) {
-                this.audioSlots.delete(key);
-                this.currentIndices.delete(key);
-            }
-
-            // 重新启用添加按钮
-            const addButton = slot.querySelector('.add-audio');
-            addButton.disabled = false;
+            const audioName = document.createElement('span');
+            audioName.className = 'audio-name flex-1 truncate text-gray-700 text-sm px-2';
+            audioName.textContent = file.name;
+            
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-audio opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-700 rounded-full p-1 transition-all flex-shrink-0';
+            removeButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            `;
+            removeButton.title = '删除音频';
+            
+            const audio = new Audio(URL.createObjectURL(file));
+            audioItem.audio = audio;
+            
+            removeButton.addEventListener('click', () => {
+                URL.revokeObjectURL(audio.src);
+                audioItem.remove();
+                this.updateSlotState(slot);
+            });
+            
+            audioItem.appendChild(audioName);
+            audioItem.appendChild(removeButton);
+            slot.querySelector('.audio-list').appendChild(audioItem);
         });
 
-        // 将音频添加到列表
-        audioList.appendChild(audioItem);
-
-        // 更新音频映射
-        if (!this.audioSlots.has(key)) {
-            this.audioSlots.set(key, []);
-            this.currentIndices.set(key, 0);
-        }
-        this.audioSlots.get(key).push({ audio, element: audioItem });
-
-        // 如果达到最大数量，禁用添加按钮
-        if (audioList.children.length >= 10) {
-            const addButton = slot.querySelector('.add-audio');
-            addButton.disabled = true;
-        }
-
-        // 清除文件输入
+        this.updateSlotState(slot);
         event.target.value = '';
     }
 
@@ -110,25 +96,46 @@ class AudioPlayer {
         if (!/^[0-9]$/.test(key)) return;
 
         const slot = document.querySelector(`.audio-slot[data-key="${key}"]`);
-        const audioItems = this.getSlotAudios(key);
-
+        const audioItems = Array.from(slot.querySelectorAll('.audio-item'));
+        
         if (!audioItems || audioItems.length === 0) return;
 
-        let currentIndex = this.currentIndices.get(key) || 0;
-        const currentAudio = audioItems[currentIndex].audio;
-        const currentElement = audioItems[currentIndex].element;
+        // 停止当前正在播放的音频
+        this.stopAudio();
 
-        if (this.currentlyPlaying === currentAudio) {
-            // 如果按下的是当前正在播放的音频的按键，切换到下一个音频
-            this.stopAudio();
-            currentIndex = (currentIndex + 1) % audioItems.length;
-            this.currentIndices.set(key, currentIndex);
-            this.playAudio(key, currentIndex);
-        } else {
-            // 停止当前正在播放的音频（如果有）
-            this.stopAudio();
-            // 播放新的音频
-            this.playAudio(key, currentIndex);
+        // 随机选择一个音频
+        const randomIndex = Math.floor(Math.random() * audioItems.length);
+        const selectedItem = audioItems[randomIndex];
+        const audio = selectedItem.audio;
+
+        // 移除所有活动状态
+        document.querySelectorAll('.audio-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelectorAll('.audio-slot').forEach(s => {
+            s.classList.remove('playing');
+        });
+
+        // 添加活动状态
+        selectedItem.classList.add('active');
+        slot.classList.add('playing');
+
+        // 播放音频
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play()
+                .then(() => {
+                    this.currentlyPlaying = audio;
+                })
+                .catch(error => {
+                    console.error('播放失败:', error);
+                    this.stopAudio();
+                });
+
+            // 设置结束事件
+            audio.onended = () => {
+                this.stopAudio();
+            };
         }
     }
 
@@ -190,6 +197,17 @@ class AudioPlayer {
             document.querySelectorAll('.audio-slot').forEach(slot => {
                 slot.classList.remove('playing');
             });
+        }
+    }
+
+    updateSlotState(slot) {
+        const audioList = slot.querySelector('.audio-list');
+        const addButton = slot.querySelector('.add-audio');
+
+        if (audioList.children.length >= 10) {
+            addButton.disabled = true;
+        } else {
+            addButton.disabled = false;
         }
     }
 }

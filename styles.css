@@ -79,6 +79,18 @@
   }
 }
 
+.audio-item.active {
+    @apply bg-blue-50 border border-blue-200;
+}
+
+.audio-slot.playing .audio-item.active {
+    @apply ring-2 ring-blue-400 ring-opacity-50;
+}
+
+.audio-list {
+    @apply space-y-0;
+}
+
 * {
   margin: 0;
   padding: 0;

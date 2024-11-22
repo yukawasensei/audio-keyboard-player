@@ -2,6 +2,8 @@
 let audioFiles = Array.from({ length: 10 }, () => []);
 let currentAudioIndex = Array(10).fill(0);
 let audioElements = Array(10).fill(null);
+let currentAudio = null;
+let volume = 1.0;
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 恢复保存的音频文件
     restoreAudioFiles();
+
+    // 音量控制事件监听
+    const volumeControl = document.getElementById('volume');
+    const volumeValue = document.getElementById('volumeValue');
+    
+    // 设置初始音量
+    volume = volumeControl.value / 100;
+    volumeValue.textContent = `${volumeControl.value}%`;
+    
+    volumeControl.addEventListener('input', (e) => {
+        volume = e.target.value / 100;
+        volumeValue.textContent = `${e.target.value}%`;
+        
+        // 更新所有正在播放的音频音量
+        if (currentAudio) {
+            currentAudio.volume = volume;
+        }
+        audioElements.forEach(audio => {
+            if (audio) {
+                audio.volume = volume;
+            }
+        });
+    });
 });
 
 // 处理文件选择
@@ -115,6 +140,7 @@ function playAudio(slotIndex, index) {
     const audioData = audioFiles[slotIndex][randomIndex].data;
     
     const audio = new Audio(audioData);
+    audio.volume = volume; // 设置音量
     // 保存当前播放的音频元素
     audioElements[slotIndex] = audio;
     

@@ -10,6 +10,19 @@
     <div class="max-w-7xl mx-auto space-y-8">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">助播DJ控制台</h1>
         
+        <div class="flex items-center justify-center mb-6 w-full max-w-md mx-auto">
+          <label for="volume" class="mr-3 text-gray-700 dark:text-gray-300">音量:</label>
+          <input 
+            type="range" 
+            id="volume" 
+            min="0" 
+            max="100" 
+            value="100"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          >
+          <span id="volumeValue" class="ml-3 min-w-[3rem] text-gray-700 dark:text-gray-300">100%</span>
+        </div>
+
         <!-- 音频卡片网格 -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card0">

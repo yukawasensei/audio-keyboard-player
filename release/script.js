@@ -1,218 +1,196 @@
-class AudioPlayer {
-    constructor() {
-        this.audioSlots = new Map(); // 存储每个按键的音频列表
-        this.currentlyPlaying = null; // 当前正在播放的音频
-        this.currentIndices = new Map(); // 每个按键当前播放的音频索引
-        this.pressTimer = null; // 用于检测长按
-        this.setupEventListeners();
+// 音频数据存储
+let audioFiles = Array.from({ length: 10 }, () => []);
+let currentAudioIndex = Array(10).fill(0);
+let audioElements = Array(10).fill(null);
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    // 为每个输入框添加事件监听器
+    for (let i = 0; i < 10; i++) {
+        const input = document.getElementById(`audioInput${i}`);
+        input.addEventListener('change', (e) => handleFileSelect(e, i));
     }
 
-    setupEventListeners() {
-        // 设置文件输入监听器
-        document.querySelectorAll('.audio-input').forEach(input => {
-            input.addEventListener('change', (e) => this.handleFileSelect(e));
-        });
+    // 添加键盘事件监听器
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
 
-        // 设置添加按钮监听器
-        document.querySelectorAll('.add-audio').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const slot = e.target.closest('.audio-slot');
-                const input = slot.querySelector('.audio-input');
-                input.click();
-            });
-        });
+    // 恢复保存的音频文件
+    restoreAudioFiles();
+});
 
-        // 设置键盘事件监听器
-        document.addEventListener('keydown', (e) => {
-            if (this.pressTimer === null) {
-                this.pressTimer = setTimeout(() => {
-                    this.handleLongPress(e.key);
-                }, 1000);
-                this.handleKeyPress(e);
-            }
-        });
+// 处理文件选择
+function handleFileSelect(event, slotIndex) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
 
-        document.addEventListener('keyup', () => {
-            if (this.pressTimer !== null) {
-                clearTimeout(this.pressTimer);
-                this.pressTimer = null;
-            }
-        });
+    // 检查是否超过限制
+    if (audioFiles[slotIndex].length + files.length > 10) {
+        alert('每个按键最多只能添加10个音频文件');
+        return;
     }
 
-    handleFileSelect(event) {
-        const slot = event.target.closest('.audio-slot');
-        const files = Array.from(event.target.files);
-        const currentCount = slot.querySelector('.audio-list').children.length;
-        const remainingSlots = 10 - currentCount;
-
-        if (files.length > remainingSlots) {
-            alert(`每个按键最多只能添加10个音频文件。当前还可以添加${remainingSlots}个。`);
+    // 处理每个文件
+    files.forEach(file => {
+        if (!file.type.startsWith('audio/')) {
+            alert('请只上传音频文件');
             return;
         }
 
-        files.forEach(file => {
-            if (!file.type.startsWith('audio/')) {
-                alert(`文件 "${file.name}" 不是音频文件。`);
-                return;
-            }
-
-            const audioItem = document.createElement('div');
-            audioItem.className = 'audio-item flex items-center gap-2 p-2 bg-gray-50 rounded-md group hover:bg-gray-100 transition-colors h-12 w-full mb-2';
-            
-            const audioName = document.createElement('span');
-            audioName.className = 'audio-name flex-1 truncate text-gray-700 text-sm px-2';
-            audioName.textContent = file.name;
-            
-            const removeButton = document.createElement('button');
-            removeButton.className = 'remove-audio opacity-0 group-hover:opacity-100 bg-red-100 hover:bg-red-200 text-red-700 rounded-full p-1 transition-all flex-shrink-0';
-            removeButton.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            `;
-            removeButton.title = '删除音频';
-            
-            const audio = new Audio(URL.createObjectURL(file));
-            audioItem.audio = audio;
-            
-            removeButton.addEventListener('click', () => {
-                URL.revokeObjectURL(audio.src);
-                audioItem.remove();
-                this.updateSlotState(slot);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const audioData = e.target.result;
+            audioFiles[slotIndex].push({
+                name: file.name,
+                data: audioData
             });
-            
-            audioItem.appendChild(audioName);
-            audioItem.appendChild(removeButton);
-            slot.querySelector('.audio-list').appendChild(audioItem);
-        });
-
-        this.updateSlotState(slot);
-        event.target.value = '';
-    }
-
-    handleKeyPress(event) {
-        const key = event.key;
-        if (!/^[0-9]$/.test(key)) return;
-
-        const slot = document.querySelector(`.audio-slot[data-key="${key}"]`);
-        const audioItems = Array.from(slot.querySelectorAll('.audio-item'));
-        
-        if (!audioItems || audioItems.length === 0) return;
-
-        // 停止当前正在播放的音频
-        this.stopAudio();
-
-        // 随机选择一个音频
-        const randomIndex = Math.floor(Math.random() * audioItems.length);
-        const selectedItem = audioItems[randomIndex];
-        const audio = selectedItem.audio;
-
-        // 移除所有活动状态
-        document.querySelectorAll('.audio-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        document.querySelectorAll('.audio-slot').forEach(s => {
-            s.classList.remove('playing');
-        });
-
-        // 添加活动状态
-        selectedItem.classList.add('active');
-        slot.classList.add('playing');
-
-        // 播放音频
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play()
-                .then(() => {
-                    this.currentlyPlaying = audio;
-                })
-                .catch(error => {
-                    console.error('播放失败:', error);
-                    this.stopAudio();
-                });
-
-            // 设置结束事件
-            audio.onended = () => {
-                this.stopAudio();
-            };
-        }
-    }
-
-    handleLongPress(key) {
-        if (!/^[0-9]$/.test(key)) return;
-        this.stopAudio();
-    }
-
-    getSlotAudios(key) {
-        return this.audioSlots.get(key) || [];
-    }
-
-    playAudio(key, index) {
-        const audioItems = this.getSlotAudios(key);
-        if (!audioItems || !audioItems[index]) return;
-
-        const { audio, element } = audioItems[index];
-        const slot = document.querySelector(`.audio-slot[data-key="${key}"]`);
-
-        // 移除所有活动状态
-        document.querySelectorAll('.audio-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        document.querySelectorAll('.audio-slot').forEach(s => {
-            s.classList.remove('playing');
-        });
-
-        // 添加活动状态
-        element.classList.add('active');
-        slot.classList.add('playing');
-
-        // 播放音频
-        audio.currentTime = 0;
-        audio.play()
-            .then(() => {
-                this.currentlyPlaying = audio;
-            })
-            .catch(error => {
-                console.error('播放失败:', error);
-                this.stopAudio();
-            });
-
-        // 设置结束事件
-        audio.onended = () => {
-            this.stopAudio();
+            updateAudioList(slotIndex);
+            saveAudioFiles();
         };
-    }
+        reader.readAsDataURL(file);
+    });
 
-    stopAudio() {
-        if (this.currentlyPlaying) {
-            this.currentlyPlaying.pause();
-            this.currentlyPlaying.currentTime = 0;
-            this.currentlyPlaying = null;
-            
-            // 移除所有活动状态
-            document.querySelectorAll('.audio-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelectorAll('.audio-slot').forEach(slot => {
-                slot.classList.remove('playing');
-            });
-        }
-    }
-
-    updateSlotState(slot) {
-        const audioList = slot.querySelector('.audio-list');
-        const addButton = slot.querySelector('.add-audio');
-
-        if (audioList.children.length >= 10) {
-            addButton.disabled = true;
-        } else {
-            addButton.disabled = false;
-        }
-    }
+    // 清空input，允许重复选择相同文件
+    event.target.value = '';
 }
 
-// 初始化应用
-document.addEventListener('DOMContentLoaded', () => {
-    new AudioPlayer();
-});
+// 更新音频列表显示
+function updateAudioList(slotIndex) {
+    const audioList = document.getElementById(`audioList${slotIndex}`);
+    audioList.innerHTML = '';
+
+    audioFiles[slotIndex].forEach((file, index) => {
+        const audioItem = document.createElement('div');
+        audioItem.className = 'flex justify-between items-center p-2 bg-gray-50 rounded-md';
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'text-sm text-gray-600 truncate flex-1';
+        nameSpan.textContent = file.name;
+        
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'ml-2 text-red-500 hover:text-red-700';
+        deleteButton.innerHTML = '×';
+        deleteButton.onclick = () => {
+            audioFiles[slotIndex].splice(index, 1);
+            updateAudioList(slotIndex);
+            saveAudioFiles();
+        };
+
+        audioItem.appendChild(nameSpan);
+        audioItem.appendChild(deleteButton);
+        audioList.appendChild(audioItem);
+    });
+}
+
+// 键盘按下事件处理
+function handleKeyDown(event) {
+    const key = event.key;
+    if (!/^[0-9]$/.test(key)) return;
+
+    // 修正映射关系：1-9对应0-8，0对应9
+    let slotIndex = key === '0' ? 9 : parseInt(key) - 1;
+    if (slotIndex < 0 || slotIndex >= 10) return;
+
+    // 停止当前正在播放的音频
+    stopAudio();
+
+    // 播放音频
+    playAudio(slotIndex, currentAudioIndex[slotIndex]);
+}
+
+// 键盘弹起事件处理
+function handleKeyUp(event) {
+    // 无需处理
+}
+
+// 播放音频
+function playAudio(slotIndex, index) {
+    // 先停止当前正在播放的音频
+    stopAudio();
+
+    if (audioFiles[slotIndex].length === 0) return;
+
+    // 随机选择一个音频文件
+    const randomIndex = Math.floor(Math.random() * audioFiles[slotIndex].length);
+    const audioData = audioFiles[slotIndex][randomIndex].data;
+    
+    const audio = new Audio(audioData);
+    // 保存当前播放的音频元素
+    audioElements[slotIndex] = audio;
+    
+    // 移除所有卡片的高亮效果
+    document.querySelectorAll('[id^="card"]').forEach(card => {
+        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+    });
+    
+    // 移除所有音频项的高亮效果
+    document.querySelectorAll('[id^="audioList"] > div').forEach(item => {
+        item.classList.remove('bg-blue-100');
+    });
+    
+    // 高亮当前卡片
+    const card = document.getElementById(`card${slotIndex}`);
+    card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+    
+    // 高亮当前播放的音频项
+    const audioItems = document.querySelectorAll(`#audioList${slotIndex} > div`);
+    audioItems[randomIndex].classList.add('bg-blue-100');
+    
+    audio.play();
+    
+    // 播放结束时清理高亮和引用
+    audio.onended = () => {
+        audioElements[slotIndex] = null;
+        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        audioItems[randomIndex].classList.remove('bg-blue-100');
+    };
+}
+
+// 停止音频播放
+function stopAudio() {
+    // 停止所有音频播放
+    audioElements.forEach((element, index) => {
+        if (element) {
+            element.pause();
+            element.currentTime = 0;
+            audioElements[index] = null;
+            
+            // 移除对应卡片的高亮效果
+            const card = document.getElementById(`card${index}`);
+            card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            
+            // 移除对应音频项的高亮效果
+            document.querySelectorAll(`#audioList${index} > div`).forEach(item => {
+                item.classList.remove('bg-blue-100');
+            });
+        }
+    });
+}
+
+// 存储音频文件到localStorage
+function saveAudioFiles() {
+    const audioData = audioFiles.map(files => files.map(file => ({
+        name: file.name,
+        data: file.data
+    })));
+    localStorage.setItem('audioKeyboardData', JSON.stringify(audioData));
+}
+
+// 从localStorage恢复音频文件
+function restoreAudioFiles() {
+    const savedData = localStorage.getItem('audioKeyboardData');
+    if (!savedData) return;
+
+    try {
+        const audioData = JSON.parse(savedData);
+        audioFiles = audioData.map(files => files.map(file => ({
+            name: file.name,
+            data: file.data
+        })));
+        audioFiles.forEach((files, index) => {
+            updateAudioList(index);
+        });
+    } catch (error) {
+        console.error('Error restoring audio files:', error);
+    }
+}

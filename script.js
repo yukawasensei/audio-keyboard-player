@@ -80,6 +80,7 @@ class AudioPlayer {
                 URL.revokeObjectURL(audio.src);
                 audioItem.remove();
                 this.updateSlotState(slot);
+                saveAudioFiles(); // 保存到localStorage
             });
             
             audioItem.appendChild(audioName);
@@ -212,7 +213,155 @@ class AudioPlayer {
     }
 }
 
-// 初始化应用
+// 存储音频文件到localStorage
+function saveAudioFiles() {
+    const audioSlots = document.querySelectorAll('.audio-slot');
+    const audioData = {};
+
+    audioSlots.forEach(slot => {
+        const key = slot.dataset.key;
+        const audioItems = slot.querySelectorAll('.audio-item');
+        audioData[key] = Array.from(audioItems).map(item => ({
+            name: item.querySelector('.audio-name').textContent,
+            data: item.audioBlob
+        }));
+    });
+
+    localStorage.setItem('audioKeyboardData', JSON.stringify(audioData));
+}
+
+// 从localStorage恢复音频文件
+async function restoreAudioFiles() {
+    const savedData = localStorage.getItem('audioKeyboardData');
+    if (!savedData) return;
+
+    try {
+        const audioData = JSON.parse(savedData);
+        for (const [key, files] of Object.entries(audioData)) {
+            const slot = document.querySelector(`.audio-slot[data-key="${key}"]`);
+            if (slot) {
+                for (const file of files) {
+                    if (file.data) {
+                        const blob = new Blob([file.data], { type: 'audio/*' });
+                        const audioFile = new File([blob], file.name, { type: 'audio/*' });
+                        await addAudioToSlot(slot, audioFile);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error restoring audio files:', error);
+    }
+}
+
+// 修改添加音频文件的函数
+async function addAudioToSlot(slot, file) {
+    const audioList = slot.querySelector('.audio-list');
+    const existingItems = audioList.querySelectorAll('.audio-item');
+    
+    if (existingItems.length >= 10) {
+        alert('每个按键最多只能添加10个音频文件');
+        return;
+    }
+
+    // 创建音频元素
+    const audio = document.createElement('audio');
+    audio.src = URL.createObjectURL(file);
+
+    // 创建音频项
+    const audioItem = document.createElement('div');
+    audioItem.className = 'audio-item flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200';
+    
+    // 存储音频数据
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        audioItem.audioBlob = e.target.result;
+        saveAudioFiles(); // 保存到localStorage
+    };
+    reader.readAsArrayBuffer(file);
+
+    // 音频名称
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'audio-name text-sm text-gray-600 truncate flex-1';
+    nameSpan.textContent = file.name;
+    
+    // 删除按钮
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'ml-2 text-red-500 hover:text-red-700';
+    deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>';
+    
+    // 删除事件
+    deleteButton.addEventListener('click', () => {
+        audioItem.remove();
+        URL.revokeObjectURL(audio.src);
+        saveAudioFiles(); // 更新localStorage
+    });
+
+    audioItem.appendChild(nameSpan);
+    audioItem.appendChild(deleteButton);
+    audioList.appendChild(audioItem);
+}
+
+// 初始化
 document.addEventListener('DOMContentLoaded', () => {
     new AudioPlayer();
+    // 添加音频文件的事件监听
+    document.querySelectorAll('.audio-input').forEach(input => {
+        input.addEventListener('change', async (event) => {
+            const files = Array.from(event.target.files);
+            const slot = event.target.closest('.audio-slot');
+            
+            for (const file of files) {
+                if (file.type.startsWith('audio/')) {
+                    await addAudioToSlot(slot, file);
+                }
+            }
+            
+            event.target.value = ''; // 清空input
+        });
+    });
+
+    // 添加按钮点击事件
+    document.querySelectorAll('.add-audio').forEach(button => {
+        button.addEventListener('click', () => {
+            const input = button.parentElement.querySelector('.audio-input');
+            input.click();
+        });
+    });
+
+    // 键盘事件
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        if (/^[0-9]$/.test(key)) {
+            const slot = document.querySelector(`.audio-slot[data-key="${key}"]`);
+            if (slot) {
+                const audioItems = slot.querySelectorAll('.audio-item');
+                if (audioItems.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * audioItems.length);
+                    const selectedItem = audioItems[randomIndex];
+                    
+                    // 移除其他正在播放的音频的active状态
+                    document.querySelectorAll('.audio-item.active').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // 播放选中的音频
+                    const audio = new Audio();
+                    audio.src = URL.createObjectURL(new Blob([selectedItem.audioBlob]));
+                    audio.play();
+                    
+                    // 添加active状态
+                    selectedItem.classList.add('active');
+                    
+                    // 播放结束后移除active状态
+                    audio.onended = () => {
+                        selectedItem.classList.remove('active');
+                    };
+                }
+            }
+        }
+    });
+
+    // 恢复保存的音频文件
+    restoreAudioFiles();
 });

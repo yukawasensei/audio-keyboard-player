@@ -21,21 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 处理文件选择
 function handleFileSelect(event, slotIndex) {
-        const files = Array.from(event.target.files);
-        const currentCount = slot.querySelector('.audio-list').children.length;
-        const remainingSlots = 10 - currentCount;
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
 
-        if (files.length > remainingSlots) {
-            alert(`每个按键最多只能添加10个音频文件。当前还可以添加${remainingSlots}个。`);
-            return;
-        }
+    // 检查是否超过限制
+    if (audioFiles[slotIndex].length + files.length > 10) {
+        alert('每个按键最多只能添加10个音频文件');
+        return;
+    }
 
     // 处理每个文件
-        files.forEach(file => {
-            if (!file.type.startsWith('audio/')) {
+    files.forEach(file => {
+        if (!file.type.startsWith('audio/')) {
             alert('请只上传音频文件');
-                return;
-            }
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -48,11 +48,11 @@ function handleFileSelect(event, slotIndex) {
             saveAudioFiles();
         };
         reader.readAsDataURL(file);
-        });
+    });
 
-        this.updateSlotState(slot);
-        event.target.value = '';
-    }
+    // 清空input，允许重复选择相同文件
+    event.target.value = '';
+}
 
 // 更新音频列表显示
 function updateAudioList(slotIndex) {
@@ -84,16 +84,17 @@ function updateAudioList(slotIndex) {
 
 // 键盘按下事件处理
 function handleKeyDown(event) {
-        const key = event.key;
-        if (!/^[0-9]$/.test(key)) return;
+    const key = event.key;
+    if (!/^[0-9]$/.test(key)) return;
 
-    const slotIndex = parseInt(key);
+    // 修正映射关系：1-9对应0-8，0对应9
+    let slotIndex = key === '0' ? 9 : parseInt(key) - 1;
     if (slotIndex < 0 || slotIndex >= 10) return;
 
-        // 停止当前正在播放的音频
+    // 停止当前正在播放的音频
     stopAudio();
 
-        // 播放音频
+    // 播放音频
     playAudio(slotIndex, currentAudioIndex[slotIndex]);
 }
 
@@ -102,23 +103,48 @@ function handleKeyUp(event) {
     // 无需处理
 }
 
-        // 播放音频
+// 播放音频
 function playAudio(slotIndex, index) {
-    if (index < 0 || index >= audioFiles[slotIndex].length) return;
+    // 先停止当前正在播放的音频
+    stopAudio();
 
-    const audioData = audioFiles[slotIndex][index].data;
-    const audio = new Audio();
-    audio.src = audioData;
+    if (audioFiles[slotIndex].length === 0) return;
+
+    // 随机选择一个音频文件
+    const randomIndex = Math.floor(Math.random() * audioFiles[slotIndex].length);
+    const audioData = audioFiles[slotIndex][randomIndex].data;
+    
+    const audio = new Audio(audioData);
+    // 保存当前播放的音频元素
+    audioElements[slotIndex] = audio;
+    
+    // 移除所有卡片的高亮效果
+    document.querySelectorAll('[id^="card"]').forEach(card => {
+        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+    });
+    
+    // 移除所有音频项的高亮效果
+    document.querySelectorAll('[id^="audioList"] > div').forEach(item => {
+        item.classList.remove('bg-blue-100');
+    });
+    
+    // 高亮当前卡片
+    const card = document.getElementById(`card${slotIndex}`);
+    card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+    
+    // 高亮当前播放的音频项
+    const audioItems = document.querySelectorAll(`#audioList${slotIndex} > div`);
+    audioItems[randomIndex].classList.add('bg-blue-100');
+    
     audio.play();
-
-    // 更新当前播放索引
-    currentAudioIndex[slotIndex] = index;
-
-    // 添加事件监听器
-        audio.onended = () => {
-        stopAudio();
-        };
-    }
+    
+    // 播放结束时清理高亮和引用
+    audio.onended = () => {
+        audioElements[slotIndex] = null;
+        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        audioItems[randomIndex].classList.remove('bg-blue-100');
+    };
+}
 
 // 停止音频播放
 function stopAudio() {
@@ -128,6 +154,15 @@ function stopAudio() {
             element.pause();
             element.currentTime = 0;
             audioElements[index] = null;
+            
+            // 移除对应卡片的高亮效果
+            const card = document.getElementById(`card${index}`);
+            card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            
+            // 移除对应音频项的高亮效果
+            document.querySelectorAll(`#audioList${index} > div`).forEach(item => {
+                item.classList.remove('bg-blue-100');
+            });
         }
     });
 }
@@ -142,7 +177,7 @@ function saveAudioFiles() {
 }
 
 // 从localStorage恢复音频文件
-async function restoreAudioFiles() {
+function restoreAudioFiles() {
     const savedData = localStorage.getItem('audioKeyboardData');
     if (!savedData) return;
 

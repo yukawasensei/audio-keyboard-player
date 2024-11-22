@@ -1,167 +1,169 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>助播DJ控制台</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                助播DJ控制台
-            </h1>
-        </header>
-
-        <div class="grid gap-8">
-            <section class="bg-white rounded-lg p-6 shadow-lg">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">音频控制面板</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="1">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">1</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="2">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">2</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="3">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">3</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="4">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">4</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="5">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">5</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="6">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">6</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="7">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">7</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="8">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">8</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="9">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">9</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
-                    <div class="audio-slot group relative bg-white rounded-lg p-4 shadow transition-all hover:shadow-md border border-gray-200" data-key="0">
-                        <span class="key-label absolute -top-2 -left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">0</span>
-                        <div class="slot-header flex items-center gap-2 mb-3">
-                            <input type="file" accept="audio/*" class="audio-input hidden" multiple>
-                            <button class="add-audio h-12 w-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition-colors flex items-center justify-center border border-blue-200" title="添加音频">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="audio-list space-y-2"></div>
-                    </div>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">助播DJ控制台</h1>
+        
+        <!-- 音频卡片网格 -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card0">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">1号位</span>
+                    <button onclick="document.getElementById('audioInput0').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput0" class="hidden" accept="audio/*" multiple>
                 </div>
-            </section>
+                <div id="audioList0" class="flex-grow space-y-2"></div>
+            </div>
 
-            <section class="bg-white rounded-lg p-6 shadow-lg">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">使用说明</h2>
-                <div class="space-y-3 text-gray-600">
-                    <p class="flex items-center gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
-                        <span>为每个数字键添加一个或多个音频文件（最多10个），支持多选上传</span>
-                    </p>
-                    <p class="flex items-center gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">2</span>
-                        <span>按下对应的数字键(1-0)播放音频</span>
-                    </p>
-                    <p class="flex items-center gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">3</span>
-                        <span>再次按下相同的按键可以切换到下一个音频</span>
-                    </p>
-                    <p class="flex items-center gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">4</span>
-                        <span>长按数字键（1秒）停止当前播放</span>
-                    </p>
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card1">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">2号位</span>
+                    <button onclick="document.getElementById('audioInput1').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput1" class="hidden" accept="audio/*" multiple>
                 </div>
-            </section>
+                <div id="audioList1" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card2">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">3号位</span>
+                    <button onclick="document.getElementById('audioInput2').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput2" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList2" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card3">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">4号位</span>
+                    <button onclick="document.getElementById('audioInput3').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput3" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList3" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">5号位</span>
+                    <button onclick="document.getElementById('audioInput4').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput4" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList4" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card5">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">6号位</span>
+                    <button onclick="document.getElementById('audioInput5').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput5" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList5" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">7号位</span>
+                    <button onclick="document.getElementById('audioInput6').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput6" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList6" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card7">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">8号位</span>
+                    <button onclick="document.getElementById('audioInput7').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput7" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList7" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card8">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">9号位</span>
+                    <button onclick="document.getElementById('audioInput8').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput8" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList8" class="flex-grow space-y-2"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all duration-200" id="card9">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold text-gray-700">0号位</span>
+                    <button onclick="document.getElementById('audioInput9').click()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="file" id="audioInput9" class="hidden" accept="audio/*" multiple>
+                </div>
+                <div id="audioList9" class="flex-grow space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">使用说明</h2>
+            <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm mt-0.5">1</span>
+                    <span class="text-gray-600">点击每个卡片右上角的"+"按钮添加音频文件（每个按键最多10个文件）</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm mt-0.5">2</span>
+                    <span class="text-gray-600">按下键盘上对应的数字键（1-0）播放该位置的随机音频</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm mt-0.5">3</span>
+                    <span class="text-gray-600">点击音频文件右侧的"×"按钮可以删除该音频</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm mt-0.5">4</span>
+                    <span class="text-gray-600">音频文件会自动保存在浏览器的本地存储（localStorage）中，刷新页面后会自动恢复。注意：清除浏览器数据会导致保存的音频丢失</span>
+                </div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
